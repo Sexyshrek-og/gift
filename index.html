@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A Tribute | Celebrating You</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300;1,600&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <style>
+        :root {
+            --navy: #14213d;
+            --gold: #fca311;
+            --white: #ffffff;
+            --platinum: #e5e5e5;
+            --black: #000000;
+            --soft-radius: 40px; /* Global soft corner setting */
+            --card-radius: 25px;
+        }
+
+        html { scroll-behavior: smooth; }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            color: var(--white);
+            background-color: var(--black);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* --- BACKGROUND LAYER --- */
+        #fx-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .fx-item {
+            position: absolute;
+            pointer-events: none;
+            opacity: 0;
+            animation: floatUp 12s linear infinite;
+        }
+
+        @keyframes floatUp {
+            0% { transform: translateY(110vh) rotate(0deg); opacity: 0; }
+            20% { opacity: 0.35; }
+            80% { opacity: 0.35; }
+            100% { transform: translateY(-20vh) rotate(360deg); opacity: 0; }
+        }
+
+        /* --- UI ELEMENTS --- */
+        .music-toggle {
+            position: fixed;
+            top: 30px;
+            right: 30px;
+            z-index: 9999;
+            background: rgba(20, 33, 61, 0.8);
+            border: 2px solid var(--gold);
+            color: var(--gold);
+            border-radius: 50%; /* Naturally soft */
+            width: 55px;
+            height: 55px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(10px);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .music-toggle:hover { transform: scale(1.1); background: var(--gold); color: var(--navy); }
+
+        /* --- SECTIONS --- */
+        section {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 100px 20px;
+            position: relative;
+        }
+
+        .hero { 
+            background: radial-gradient(circle at center, var(--navy) 0%, var(--black) 100%);
+            text-align: center; 
+        }
+
+        h1 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: clamp(3rem, 12vw, 7.5rem);
+            font-weight: 300;
+            font-style: italic;
+            color: var(--gold);
+            line-height: 0.9;
+            margin-bottom: 25px;
+        }
+
+        .sub-header {
+            text-transform: uppercase;
+            letter-spacing: 10px;
+            font-size: 0.75rem;
+            color: var(--platinum);
+            margin-bottom: 20px;
+        }
+
+        /* --- GALLERY --- */
+        .gallery-section { background-color: var(--platinum); color: var(--navy); }
+
+        .gallery-grid {
+            width: 100%;
+            max-width: 1100px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 35px;
+            padding: 40px 0;
+        }
+
+        .photo-card {
+            background: var(--white);
+            padding: 15px;
+            border-radius: var(--card-radius); /* Soft corners for images */
+            box-shadow: 0 15px 35px rgba(0,0,0,0.08);
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow: hidden;
+        }
+
+        .photo-card:hover { transform: translateY(-12px); box-shadow: 0 25px 50px rgba(0,0,0,0.12); }
+
+        .photo-card img { 
+            width: 100%; 
+            height: auto; 
+            display: block; 
+            border-radius: calc(var(--card-radius) - 10px); /* Nested soft corners */
+            filter: contrast(1.02);
+        }
+
+        /* --- MESSAGE CONTAINER --- */
+        .letter-container {
+            max-width: 800px;
+            width: 100%;
+            padding: clamp(35px, 8vw, 80px);
+            background: var(--white);
+            color: var(--black);
+            border-radius: var(--soft-radius); /* Soft main card */
+            box-shadow: 0 30px 60px rgba(0,0,0,0.3);
+            position: relative;
+        }
+
+        #typing-text {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: clamp(1.2rem, 3.5vw, 1.7rem);
+            line-height: 1.8;
+            white-space: pre-wrap;
+        }
+
+        /* --- BUTTONS --- */
+        .btn {
+            font-family: 'Montserrat', sans-serif;
+            background: var(--gold);
+            color: var(--navy);
+            padding: 22px 55px;
+            text-decoration: none;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 5px;
+            font-size: 0.8rem;
+            border-radius: 100px; /* Pill-shaped soft corners */
+            transition: all 0.4s ease;
+            border: none;
+            cursor: pointer;
+            margin-top: 40px;
+            position: relative;
+            z-index: 10;
+            display: inline-block;
+            box-shadow: 0 10px 25px rgba(252, 163, 17, 0.3);
+        }
+
+        .btn:hover { 
+            background: var(--white); 
+            color: var(--navy); 
+            transform: translateY(-5px); 
+            box-shadow: 0 15px 35px rgba(252, 163, 17, 0.4);
+        }
+
+        .final-msg {
+            display: none;
+            margin-top: 50px;
+            font-size: clamp(2rem, 8vw, 3.5rem);
+            font-family: 'Cormorant Garamond', serif;
+            font-style: italic;
+            color: var(--gold);
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+    <audio id="bgMusic" loop>
+        <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-15.mp3" type="audio/mpeg">
+    </audio>
+
+    <button class="music-toggle" onclick="toggleMusic()" aria-label="Toggle Music">◈</button>
+    <div id="fx-container"></div>
+
+    <section class="hero">
+        <p class="sub-header">A Curated Celebration</p>
+        <h1>Sushi</h1>
+        <p style="color: var(--gold); letter-spacing: 6px; margin-top: 10px; font-weight: 300;">MARCH . 21 . 2026</p>
+        <a href="#gallery" class="btn">View Gallery</a>
+    </section>
+
+    <section id="gallery" class="gallery-section">
+        <h2 style="font-family: 'Cormorant Garamond'; font-size: 3.5rem; margin-bottom: 10px; font-style: italic;">The Collection</h2>
+        <p style="margin-bottom: 50px; text-transform: uppercase; letter-spacing: 3px; font-size: 0.7rem; opacity: 0.6;">Moments in focus</p>
+        <div class="gallery-grid">
+            <div class="gallery-grid">
+    <div class="photo-card"><img src="IMG_20260110_195021_435.jpg" alt="photo1"></div>
+    <div class="photo-card"><img src="IMG_20260110_195026_757.jpg" alt="photo2"></div>
+    <div class="photo-card"><img src="IMG_20260124_114031_923.jpg" alt="photo3"></div>
+    <div class="photo-card"><img src="IMG_20260110_194933_367.jpg" alt="photo4"></div>
+    <div class="photo-card"><img src="IMG_20260211_221234_403.jpg" alt="photo5"></div>
+    <div class="photo-card"><img src="IMG_20260211_222909_592.jpg" alt="photo6"></div>
+</div>
+        <a href="#message" class="btn" style="background: var(--navy); color: white;" onclick="startTyping()">Read the Note</a>
+    </section>
+
+    <section id="message" style="background-color: var(--navy);">
+        <div class="letter-container">
+            <div id="typing-text"></div>
+        </div>
+    </section>
+
+    <section style="background-color: var(--black);">
+        <h2 style="font-style: italic; font-weight: 200; text-align: center; color: var(--platinum); padding: 0 20px;">Stay exactly the wonderful chaos you are.</h2>
+        <button class="btn" onclick="celebrate()">Final Reveal</button>
+        <div id="final-msg" class="final-msg">Happy Birthday Pocket. 🎂✨</div>
+    </section>
+
+    <script>
+        const audio = document.getElementById('bgMusic');
+        let isPlaying = false;
+        function toggleMusic() {
+            if (isPlaying) { audio.pause(); } 
+            else { audio.play().catch(() => {}); }
+            isPlaying = !isPlaying;
+        }
+
+        // BACKGROUND FX
+        const fxContainer = document.getElementById('fx-container');
+        function createEffect() {
+            const item = document.createElement('div');
+            item.className = 'fx-item';
+            if(Math.random() > 0.5) {
+                item.innerHTML = '🍲';
+                item.style.fontSize = Math.random() * 20 + 22 + 'px';
+            } else {
+                item.innerHTML = '✦';
+                item.style.color = '#fca311';
+                item.style.fontSize = Math.random() * 15 + 10 + 'px';
+            }
+            item.style.left = Math.random() * 100 + 'vw';
+            item.style.animationDuration = Math.random() * 5 + 9 + 's';
+            fxContainer.appendChild(item);
+            setTimeout(() => item.remove(), 12000);
+        }
+        setInterval(createEffect, 700);
+
+        // THE NOTE
+        const note = `Some days arrive quietly,
+and some arrive carrying colors —
+like a little Holi on the screen,
+a little jealousy, a little laughter,
+and a lot of unspoken care.
+
+In the middle of silly arguments,
+late-night talks,
+“good night” that never stayed good night,
+and anger that secretly wanted to be calmed,
+one thing always stayed clear—
+you matter.
+
+Not because you asked for it,
+not because you demanded it,
+but because somehow, in all the chaos,
+your place stayed the same—
+the one that matters the most.
+
+So today isn’t about the drama,
+the teasing anger,
+or the playful fights we secretly enjoy.
+Today is simply about you.
+
+May your year be full of
+colors brighter than Holi,
+nights filled with laughter instead of overthinking,
+and moments where you always remember
+how deeply you are valued.
+
+Happy Birthday.
+Stay exactly the wonderful chaos you are.`;
+
+        let i = 0; 
+        let typed = false;
+        function startTyping() {
+            if (typed) return; 
+            typed = true;
+            if(!isPlaying) toggleMusic();
+            const target = document.getElementById('typing-text');
+            function type() {
+                if (i < note.length) {
+                    target.innerHTML += note.charAt(i); 
+                    i++;
+                    setTimeout(type, 50);
+                }
+            }
+            type();
+        }
+
+        function celebrate() {
+            confetti({
+                particleCount: 300, 
+                spread: 120, 
+                origin: { y: 0.6 },
+                colors: ['#fca311', '#14213d', '#ffffff']
+            });
+            document.getElementById('final-msg').style.display = 'block';
+            setTimeout(() => {
+                window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+            }, 100);
+        }
+    </script>
+</body>
+</html>
